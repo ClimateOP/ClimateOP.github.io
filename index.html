@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Baburao Gaonkar — Aspiring Developer</title>
+<meta name="description" content="Portfolio of Baburao Gaonkar — an aspiring developer building real-world software at the intersection of web, apps, and AI/ML." />
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+  :root {
+    --accent-color: #0ea5e9;        /* deep sea blue */
+    --accent-2: #0369a1;            /* darker sea blue */
+    --accent-glow: rgba(14,165,233,0.45);
+    --bg-0: #03060d;
+    --bg-1: #061322;
+    --bg-2: #0a1f35;
+    --glass-bg: rgba(13, 40, 70, 0.35);
+    --glass-bg-strong: rgba(13, 40, 70, 0.55);
+    --glass-border: rgba(125, 211, 252, 0.18);
+    --glass-border-strong: rgba(125, 211, 252, 0.35);
+    --text: #e6f3ff;
+    --text-dim: #9ec7e6;
+    --text-faint: #6b8caf;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Spline Sans', system-ui, sans-serif;
+    background: var(--bg-0);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Deep-sea animated background */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(14,165,233,0.18), transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(3,105,161,0.22), transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(8,30,55,0.5), transparent 70%),
+      linear-gradient(180deg, #03060d 0%, #061322 50%, #03060d 100%);
+  }
+  .bg-layer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 25% 30%, rgba(56,189,248,0.06) 0, transparent 2px),
+      radial-gradient(circle at 75% 60%, rgba(56,189,248,0.05) 0, transparent 2px),
+      radial-gradient(circle at 45% 80%, rgba(56,189,248,0.04) 0, transparent 2px);
+    background-size: 300px 300px, 250px 250px, 200px 200px;
+    animation: drift 60s linear infinite;
+    opacity: 0.6;
+  }
+  @keyframes drift {
+    from { background-position: 0 0, 0 0, 0 0; }
+    to   { background-position: 300px 300px, -250px 250px, 200px -200px; }
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .orb-1 { width: 500px; height: 500px; background: var(--accent-color); top: -150px; left: -100px; animation: float1 18s ease-in-out infinite; }
+  .orb-2 { width: 450px; height: 450px; background: var(--accent-2); bottom: -120px; right: -80px; animation: float2 22s ease-in-out infinite; }
+  @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(60px,40px)} }
+  @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-50px,-60px)} }
+
+  /* Text selection */
+  ::selection { background: var(--accent-color); color: var(--white); }
+  ::-moz-selection { background: var(--accent-color); color: var(--white); }
+
+  /* Custom cursor */
+  body, a, button, input, textarea { cursor: none !important; }
+  .cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+  }
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--accent-color);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+  .cursor-ring {
+    width: 38px; height: 38px;
+    border: 1.5px solid var(--accent-color);
+    transition: width 0.25s ease, height 0.25s ease, background 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+  }
+  .cursor-ring.hovering {
+    width: 60px; height: 60px;
+    background: rgba(14,165,233,0.12);
+    border-color: var(--accent-color);
+  }
+
+  /* Navbar */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 1.2rem clamp(1.2rem, 5vw, 3rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(3,6,13,0.45);
+    border-bottom: 1px solid var(--glass-border);
+    transition: padding 0.3s ease;
+  }
+  nav.scrolled { padding-top: 0.8rem; padding-bottom: 0.8rem; background: rgba(3,6,13,0.7); }
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); display: inline-block; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.25s ease;
+  }
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: var(--accent-color);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { width: 100%; }
+  .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; }
+
+  /* Layout */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.2rem, 5vw, 2rem); }
+  section { padding: clamp(5rem, 12vh, 8rem) 0; position: relative; }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-top: 7rem;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    width: 100%;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    font-size: 0.82rem;
+    color: var(--accent-color);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+  }
+  .hero-tag .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-color); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 0 var(--accent-glow);} 50%{ box-shadow: 0 0 0 8px transparent;} }
+
+  h1.hero-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.2rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff 0%, #7dd3fc 60%, var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-role {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: 1.3rem;
+  }
+  .hero-role .accent { color: var(--accent-color); }
+  .hero-bio {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 540px;
+    margin-bottom: 2rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    border: 1px solid transparent;
+  }
+  .btn-primary {
+    background: var(--accent-color);
+    color: var(--white);
+    box-shadow: 0 8px 30px var(--accent-glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px var(--accent-glow); }
+  .btn-ghost {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    backdrop-filter: blur(10px);
+  }
+  .btn-ghost:hover { border-color: var(--glass-border-strong); transform: translateY(-2px); }
+
+  /* Hero profile card */
+  .hero-card {
+    padding: 1.8rem;
+    border-radius: 24px;
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    text-align: center;
+  }
+  .hero-card .avatar-wrap {
+    position: relative;
+    width: 130px; height: 130px;
+    margin: 0 auto 1.2rem;
+  }
+  .hero-card .avatar-wrap img {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-color);
+    box-shadow: 0 0 30px var(--accent-glow);
+  }
+  .hero-card .avatar-wrap::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px dashed var(--glass-border-strong);
+    animation: spin 20s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hero-card h3 { font-family: 'Space Grotesk'; font-size: 1.2rem; margin-bottom: 0.2rem; }
+  .hero-card .username { color: var(--accent-color); font-size: 0.9rem; margin-bottom: 1rem; }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+  .hero-stat {
+    padding: 0.7rem 0.3rem;
+    border-radius: 12px;
+    background: rgba(3,6,13,0.4);
+    border: 1px solid var(--glass-border);
+  }
+  .hero-stat .num { font-family: 'Space Grotesk'; font-size: 1.1rem; font-weight: 700; color: var(--white); }
+  .hero-stat .lbl { font-size: 0.7rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Section headers */
+  .section-head { margin-bottom: 3rem; }
+  .section-label {
+    font-family: 'Space Grotesk';
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+  .section-title {
+    font-family: 'Space Grotesk';
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .section-sub { color: var(--text-dim); max-width: 560px; margin-top: 0.8rem; }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .glass-card {
+    padding: 2rem;
+    border-radius: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .about-text p { margin-bottom: 1rem; color: var(--text-dim); }
+  .about-text p strong { color: var(--text); }
+  .skills-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+  .skill-item {
+    padding: 1.2rem;
+    border-radius: 14px;
+    background: rgba(3,6,13,0.35);
+    border: 1px solid var(--glass-border);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+  .skill-item:hover { transform: translateY(-4px); border-color: var(--glass-border-strong); }
+  .skill-item i { font-size: 1.5rem; color: var(--accent-color); margin-bottom: 0.6rem; }
+  .skill-item h4 { font-family: 'Space Grotesk'; font-size: 1rem; margin-bottom: 0.3rem; }
+  .skill-item p { font-size: 0.82rem; color: var(--text-faint); }
+
+  /* Projects */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 1.8rem;
+  }
+  .project-card {
+    position: relative;
+    padding: 1.8rem;
+    border-radius: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    will-change: transform;
+  }
+  .project-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(14,165,233,0.12), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .project-card:hover::before { opacity: 1; }
+  .project-card:hover { border-color: var(--glass-border-strong); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+  .pc-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+  .pc-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(14,165,233,0.12);
+    border: 1px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-color); font-size: 1.2rem;
+  }
+  .pc-stars {
+    font-size: 0.85rem; color: var(--text-dim);
+    display: flex; align-items: center; gap: 0.35rem;
+  }
+  .pc-stars i { color: #fbbf24; }
+  .project-card h3 {
+    font-family: 'Space Grotesk';
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  .project-card p { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.2rem; min-height: 48px; }
+  .pc-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
+  .pc-tag {
+    font-size: 0.72rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(14,165,233,0.1);
+    border: 1px solid var(--glass-border);
+    color: var(--text-dim);
+  }
+  .pc-footer { display: flex; gap: 1rem; }
+  .pc-footer a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    transition: color 0.25s ease;
+  }
+  .pc-footer a:hover { color: var(--accent-color); }
+
+  /* Contact */
+  .contact-wrap {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-radius: 24px;
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .contact-wrap h2 {
+    font-family: 'Space Grotesk';
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin-bottom: 0.8rem;
+  }
+  .contact-wrap p { color: var(--text-dim); margin-bottom: 2rem; }
+  .social-row { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .social-card {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.9rem 1.4rem;
+    border-radius: 14px;
+    background: rgba(3,6,13,0.4);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.92rem;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .social-card:hover { transform: translateY(-3px); border-color: var(--accent-color); box-shadow: 0 10px 30px var(--accent-glow); }
+  .social-card i { font-size: 1.1rem; color: var(--accent-color); }
+
+  /* Footer */
+  footer {
+    padding: 2.5rem 0;
+    text-align: center;
+    border-top: 1px solid var(--glass-border);
+    color: var(--text-faint);
+    font-size: 0.88rem;
+  }
+  footer .accent { color: var(--accent-color); }
+
+  /* Loader */
+  .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background: var(--bg-0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.2rem;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  .loader.hide { opacity: 0; visibility: hidden; }
+  .loader-ring {
+    width: 56px; height: 56px;
+    border: 3px solid rgba(14,165,233,0.15);
+    border-top-color: var(--accent-color);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  .loader p { color: var(--text-faint); font-family: 'Space Grotesk'; letter-spacing: 0.1em; font-size: 0.85rem; text-transform: uppercase; }
+
+  /* Reveal helper */
+  .reveal { opacity: 0; transform: translateY(40px); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-card { max-width: 360px; margin: 0 auto; }
+    .about-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .menu-toggle { display: block; }
+    .nav-links.open {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 100%; right: 0; left: 0;
+      background: rgba(3,6,13,0.95);
+      padding: 1.5rem;
+      gap: 1.2rem;
+      border-bottom: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+    }
+  }
+  @media (max-width: 520px) {
+    .skills-grid { grid-template-columns: 1fr; }
+    .hero-stats { grid-template-columns: repeat(3,1fr); }
+  }
+  @media (hover: none) and (pointer: coarse) {
+    body, a, button { cursor: auto !important; }
+    .cursor-dot, .cursor-ring { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+  <div class="loader-ring"></div>
+  <p>Diving in…</p>
+</div>
+
+<!-- Background -->
+<div class="bg-layer"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- Custom Cursor -->
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Navbar -->
+<nav id="nav">
+  <a href="#hero" class="logo"><span class="dot"></span> Baburao<span style="color:var(--accent-color)">.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <span class="hero-tag reveal"><span class="pulse"></span> Available for collaboration</span>
+        <h1 class="hero-name reveal">Baburao<br>Gaonkar</h1>
+        <div class="hero-role reveal">Aspiring Developer — <span class="accent">Web · Apps · AI/ML</span></div>
+        <p class="hero-bio reveal">
+          I'm an aspiring developer who loves turning ideas into real-world software. From crafting clean web interfaces and cross-platform apps to experimenting with machine learning models, I build to learn, ship, and solve problems that matter. Currently exploring the deep end of full-stack development and AI — one project at a time.
+        </p>
+        <div class="hero-actions reveal">
+          <a href="#projects" class="btn btn-primary"><i class="fa-solid fa-code-branch"></i> View Projects</a>
+          <a href="#contact" class="btn btn-ghost"><i class="fa-solid fa-paper-plane"></i> Get in Touch</a>
+        </div>
+      </div>
+      <div class="hero-card reveal" id="heroCard">
+        <div class="avatar-wrap">
+          <img id="ghAvatar" src="" alt="GitHub Avatar" />
+        </div>
+        <h3 id="ghName">Baburao Gaonkar</h3>
+        <div class="username" id="ghHandle">@ClimateOP</div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="num" id="ghRepos">—</div><div class="lbl">Repos</div></div>
+          <div class="hero-stat"><div class="num" id="ghFollowers">—</div><div class="lbl">Followers</div></div>
+          <div class="hero-stat"><div class="num" id="ghFollowing">—</div><div class="lbl">Following</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">01 — About</span>
+      <h2 class="section-title">A developer who builds, ships, and learns out loud.</h2>
+      <p class="section-sub">Curiosity-driven and comfortable across the stack — here's a snapshot of what I'm exploring right now.</p>
+    </div>
+    <div class="about-grid">
+      <div class="glass-card about-text reveal">
+        <p><strong>Hey, I'm Baburao.</strong> I'm an aspiring developer with a hands-on approach to building software. I care less about buzzwords and more about shipping things that work — and that people actually use.</p>
+        <p>My interests span <strong>web development</strong>, <strong>app development</strong>, and <strong>AI/ML</strong>. Whether it's a responsive web app, a mobile build, or a machine-learning experiment, I like being involved end to end — from the first commit to the final deployment.</p>
+        <p>I believe the best way to learn is by building real-world projects, so I'm constantly prototyping, breaking things, and shipping improvements. When I'm not coding, I'm usually reading about climate tech, systems design, or the next thing I want to build.</p>
+      </div>
+      <div class="skills-grid reveal">
+        <div class="skill-item"><i class="fa-solid fa-globe"></i><h4>Web Development</h4><p>HTML, CSS, JavaScript, React & responsive design</p></div>
+        <div class="skill-item"><i class="fa-solid fa-mobile-screen"></i><h4>App Development</h4><p>Cross-platform apps & practical mobile builds</p></div>
+        <div class="skill-item"><i class="fa-solid fa-brain"></i><h4>AI / ML</h4><p>Models, data pipelines & applied intelligence</p></div>
+        <div class="skill-item"><i class="fa-solid fa-rocket"></i><h4>Project Building</h4><p>End-to-end software, from idea to deployment</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projects -->
+<section id="projects">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-label">02 — Projects</span>
+      <h2 class="section-title">Pinned from GitHub.</h2>
+      <p class="section-sub">Live from my repositories — fetched on page load and sorted by stars. Hover for a closer look.</p>
+    </div>
+    <div class="projects-grid" id="projectsGrid">
+      <!-- Projects injected here -->
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-wrap reveal">
+      <span class="section-label">03 — Contact</span>
+      <h2>Let's build something together.</h2>
+      <p>Open to collaborations, project ideas, and good conversations. Reach me on any of these.</p>
+      <div class="social-row">
+        <a class="social-card" href="https://github.com/ClimateOP" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> GitHub</a>
+        <a class="social-card" href="https://www.linkedin.com/in/baburao-gaonkar/" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+        <a class="social-card" href="https://www.instagram.com/climateop.dev/" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> Instagram</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    Crafted with <span class="accent">♦</span> glass & GSAP by <span class="accent">Baburao Gaonkar</span> · © <span id="year"></span>
+  </div>
+</footer>
+
+<script>
+/* ============ Hardcoded GitHub username ============ */
+const GITHUB_USERNAME = "ClimateOP";
+
+/* ============ Footer year ============ */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ============ Loader ============ */
+window.addEventListener('load', () => {
+  gsap.to('#loader', { opacity: 0, duration: 0.5, delay: 0.3, onComplete: () => document.getElementById('loader').classList.add('hide') });
+});
+
+/* ============ Custom Cursor ============ */
+(function() {
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
+
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%,-50%)`;
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.18;
+    ringY += (mouseY - ringY) * 0.18;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%,-50%)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  const hoverables = 'a, button, .project-card, .skill-item, .social-card, .hero-card';
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest(hoverables)) ring.classList.add('hovering');
+  });
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest(hoverables)) ring.classList.remove('hovering');
+  });
+})();
+
+/* ============ Navbar ============ */
+const nav = document.getElementById('nav');
+const navLinks = document.getElementById('navLinks');
+const menuToggle = document.getElementById('menuToggle');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+menuToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+/* ============ GSAP Hero entrance ============ */
+gsap.set('.reveal', { opacity: 0, y: 40 });
+window.addEventListener('load', () => {
+  const tl = gsap.timeline({ delay: 0.5 });
+  tl.to('.hero .reveal', { opacity: 1, y: 0, duration: 0.9, stagger: 0.12, ease: 'power3.out' });
+});
+
+/* ============ Scroll reveal ============ */
+gsap.registerPlugin(ScrollTrigger);
+gsap.utils.toArray('section:not(.hero) .reveal').forEach((el) => {
+  gsap.to(el, {
+    opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+});
+
+/* ============ 3D tilt on project cards (delegated) ============ */
+document.addEventListener('mousemove', (e) => {
+  const card = e.target.closest('.project-card');
+  if (!card) return;
+  const rect = card.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const cx = rect.width / 2;
+  const cy = rect.height / 2;
+  const rx = ((y - cy) / cy) * -7;
+  const ry = ((x - cx) / cx) * 7;
+  card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+  card.style.setProperty('--mx', (x / rect.width * 100) + '%');
+  card.style.setProperty('--my', (y / rect.height * 100) + '%');
+});
+document.addEventListener('mouseout', (e) => {
+  const card = e.target.closest('.project-card');
+  if (card && !card.contains(e.relatedTarget)) {
+    card.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
+  }
+});
+
+/* ============ GitHub Fetch ============ */
+(async function fetchGitHub() {
+  const profileUrl = `https://api.github.com/users/${GITHUB_USERNAME}`;
+  const reposUrl = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`;
+
+  try {
+    const [profRes, reposRes] = await Promise.all([fetch(profileUrl), fetch(reposUrl)]);
+    if (!profRes.ok) throw new Error('GitHub profile fetch failed');
+    const prof = await profRes.json();
+
+    document.getElementById('ghAvatar').src = prof.avatar_url || '';
+    document.getElementById('ghName').textContent = prof.name || GITHUB_USERNAME;
+    document.getElementById('ghHandle').textContent = '@' + (prof.login || GITHUB_USERNAME);
+    document.getElementById('ghRepos').textContent = prof.public_repos ?? '—';
+    document.getElementById('ghFollowers').textContent = prof.followers ?? '—';
+    document.getElementById('ghFollowing').textContent = prof.following ?? '—';
+  } catch (err) {
+    console.warn('GitHub profile fetch error:', err);
+  }
+
+  try {
+    const reposRes = await fetch(reposUrl);
+    const repos = await reposRes.json();
+    const sorted = repos
+      .filter(r => !r.fork)
+      .sort((a, b) => b.stargazers_count - a.stargazers_count)
+      .slice(0, 6);
+    renderProjects(sorted);
+  } catch (err) {
+    console.warn('GitHub repos fetch error:', err);
+    document.getElementById('projectsGrid').innerHTML = '<p style="color:var(--text-dim)">Repos could not be loaded right now. Visit <a href="https://github.com/ClimateOP" target="_blank" rel="noopener" style="color:var(--accent-color)">github.com/ClimateOP</a> directly.</p>';
+  }
+})();
+
+function renderProjects(repos) {
+  const grid = document.getElementById('projectsGrid');
+  if (!repos.length) {
+    grid.innerHTML = '<p style="color:var(--text-dim)">No public repositories found yet. Check back soon!</p>';
+    return;
+  }
+
+  const iconForLang = (lang) => {
+    const map = {
+      JavaScript: 'fa-brands fa-js',
+      TypeScript: 'fa-brands fa-js',
+      Python: 'fa-brands fa-python',
+      HTML: 'fa-brands fa-html5',
+      CSS: 'fa-brands fa-css3-alt',
+      Java: 'fa-brands fa-java',
+      'C++': 'fa-solid fa-code',
+      C: 'fa-solid fa-code',
+      'C#': 'fa-solid fa-code',
+      Go: 'fa-solid fa-code',
+      Rust: 'fa-solid fa-code',
+      Shell: 'fa-solid fa-terminal',
+      Dart: 'fa-solid fa-mobile-screen',
+      Kotlin: 'fa-brands fa-android',
+      Swift: 'fa-brands fa-apple',
+      null: 'fa-solid fa-code-branch'
+    };
+    return map[lang] || 'fa-solid fa-code';
+  };
+
+  grid.innerHTML = repos.map(r => `
+    <article class="project-card">
+      <div class="pc-head">
+        <div class="pc-icon"><i class="${iconForLang(r.language)}"></i></div>
+        <div class="pc-stars"><i class="fa-solid fa-star"></i> ${r.stargazers_count}</div>
+      </div>
+      <h3>${escapeHtml(r.name)}</h3>
+      <p>${escapeHtml(r.description || 'No description provided. Explore the repository to learn more.')}</p>
+      <div class="pc-tags">
+        <span class="pc-tag">${r.language || 'Code'}</span>
+        ${r.fork ? '<span class="pc-tag">Fork</span>' : '<span class="pc-tag">Original</span>'}
+      </div>
+      <div class="pc-footer">
+        <a href="${r.html_url}" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> Repository</a>
+        ${r.homepage ? `<a href="${r.homepage}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live</a>` : ''}
+      </div>
+    </article>
+  `).join('');
+
+  // Animate newly added cards in
+  gsap.from('.project-card', {
+    opacity: 0, y: 50, duration: 0.7, stagger: 0.1, ease: 'power3.out',
+    scrollTrigger: { trigger: '#projects', start: 'top 75%' }
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
